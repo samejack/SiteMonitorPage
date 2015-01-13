@@ -52,7 +52,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="/">Site Monitor</a>
+            <a class="navbar-brand" href="./">Site Monitor</a>
         </div>
         <div id="navbar" class="collapse navbar-collapse">
             <ul class="nav navbar-nav" id="site-nav"></ul>
@@ -70,7 +70,7 @@
 
 <footer class="footer">
     <div class="container">
-        <p class="text-muted">Site Monitor</p>
+        <p class="text-muted">Site Monitor Page on <a href="https://github.com/samejack/SiteMonitorPage">GitHub</a></p>
     </div>
 </footer>
 
@@ -112,7 +112,7 @@
         // render site page
         $.ajax({
             type: 'GET',
-            url: '/sites.json',
+            url: './sites.json',
             dataType: 'text',
             success: function (res) {
                 var html, navHtml, urls, fixJson;
