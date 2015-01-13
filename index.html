@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Site Monitor">
+    <meta name="author" content="SJ">
+    <link rel="icon" href="./favicon.ico">
+
+    <title>Site Monitor</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="./css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="./css/sticky-footer-navbar.css" rel="stylesheet">
+
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="./css/jasny-bootstrap.min.css">
+
+    <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
+    <!--[if lt IE 9]>
+    <script src="./js/ie8-responsive-file-warning.js"></script><![endif]-->
+    <script src="./js/ie-emulation-modes-warning.js"></script>
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+    <script src="./js/html5shiv.min.js"></script>
+    <script src="./js/respond.min.js"></script>
+    <![endif]-->
+
+    <style>
+        .thumbnail {
+            height: 240px;
+            width: 100%;
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- Fixed navbar -->
+<nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar"
+                    aria-expanded="false" aria-controls="navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">Site Monitor</a>
+        </div>
+        <div id="navbar" class="collapse navbar-collapse">
+            <ul class="nav navbar-nav" id="site-nav"></ul>
+        </div>
+        <!--/.nav-collapse -->
+    </div>
+</nav>
+
+<!-- Begin page content -->
+<div class="container" id="site-panel">
+    <div class="page-header">
+        <h1></h1>
+    </div>
+</div>
+
+<footer class="footer">
+    <div class="container">
+        <p class="text-muted">Site Monitor</p>
+    </div>
+</footer>
+
+<!-- jQuery library -->
+<script src="./js/jquery.min.js"></script>
+
+<!-- Bootstrap core JavaScript  -->
+<script src="./js/bootstrap.min.js"></script>
+
+<!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+<script src="./js/ie10-viewport-bug-workaround.js"></script>
+
+<!-- Latest compiled and minified JavaScript -->
+<script src="./js/jasny-bootstrap.min.js"></script>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        var renderSitePage = function () {
+            var group = window.location.hash.substr(1);
+            $('#site-panel > .page-header > h1').text(group);
+            $('.site-group-panel').hide();
+            $('#site-group-panel-' + group).show();
+
+            $('#site-nav li').each(function (index, element) {
+                if ($(element).find('a:first').attr('href') === '#' + group) {
+                    $(element).attr('class', 'active');
+                } else {
+                    $(element).attr('class', '');
+                }
+            });
+        };
+
+        // register hash change
+        $(window).on('hashchange', function () {
+            renderSitePage();
+        });
+
+        // render site page
+        $.ajax({
+            type: 'GET',
+            url: '/sites.json',
+            dataType: 'text',
+            success: function (res) {
+                var html, navHtml, urls, fixJson;
+                fixJson = res.replace(/\n/g, '').replace(/\s/g, '')
+                urls = JSON.parse(fixJson);
+
+                // create element
+                navHtml = '';
+                html = '';
+                for (var index in urls) {
+                    group = urls[index].title;
+                    navHtml += '<li><a href="#' + group + '">' + group + '</a></li>';
+                    html += '<div style="display: none;" class="site-group-panel" id="site-group-panel-' + group + '">';
+                    for (var i = 0, ilen = urls[index].site.length; i < ilen; i += 3) {
+                        html += '<div class="row">';
+                        for (var j = i; (j < i + 3 && j < ilen); j++) {
+                            html += '<div class="col-md-4"><iframe class="thumbnail" src="' + urls[index].site[j] + '"></iframe></div>';
+                        }
+                        html += '</div>';
+                    }
+                    html += '</div>';
+                }
+                $('#site-panel').append(html);
+                $('#site-nav').html(navHtml);
+
+                // hash event
+                if (window.location.hash === '') {
+                    window.location.hash = $('#site-nav li a').first().attr('href');
+                } else {
+                    renderSitePage();
+                }
+
+            }
+        });
+    });
+</script>
+
+</body>
+</html>
