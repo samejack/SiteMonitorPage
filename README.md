@@ -1,5 +1,5 @@
 # SiteMonitorPage
-A simple website monitoring page
+A simple website monitoring page. ([See Demo](https://samejack.github.com/SmartyGrid))  
 # Features
   - JSON File Configuration
   - Responsive Web Design
