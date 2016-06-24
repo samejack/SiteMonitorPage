@@ -1,28 +1,41 @@
 # SiteMonitorPage
-A simple website monitoring page. ([See Demo](https://samejack.github.com/SiteMonitorPage))  
+A simple Web Site monitoring page. ([See Demo](https://samejack.github.com/SiteMonitorPage))  
+
 # Features
-  - JSON File Configuration
+  - Simple JSON File Configuration
   - Responsive Web Design
+  - Async check by AJAX
+
+# Library
+  - jQuery
+  - AngularJS
+  - Bootstrap
 
 # JSON Configuration
 Modify /sites.json
 ```js
-[
+{
+  "Chinese": [
     {
-        "title": "Chinese",
-        "site": [
-            "http://zh.wikipedia.org/wiki/GitHub",
-            "http://zh.wikipedia.org/wiki/Main_Page"
-        ]
+      "title": "GitHub",
+      "url": "http://zh.wikipedia.org/wiki/GitHub"
     },
     {
-        "title": "English",
-        "site": [
-            "http://en.wikipedia.org/wiki/GitHub",
-            "http://en.wikipedia.org/wiki/Main_Page"
-        ]
+      "title": "Wiki Padia",
+      "url": "http://zh.wikipedia.org/wiki/Main_Page"
     }
-]
+  ],
+  "English": [
+    {
+      "title": "GitHub",
+      "url": "http://en.wikipedia.org/wiki/GitHub"
+    },
+    {
+      "title": "Wiki Padia",
+      "url": "http://en.wikipedia.org/wiki/Main_Page"
+    }
+  ]
+}
 ```
 
 # License
