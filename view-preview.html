@@ -1,0 +1,8 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-4" ng-repeat="host in list">
+            <a href="{{host.url}}">{{host.title}}</a>
+            <iframe class="preview" ng-src="{{host.url}}"></iframe>
+        </div>
+    </div>
+</div>

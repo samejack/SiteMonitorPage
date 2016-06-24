@@ -1,16 +1,22 @@
-[
+{
+  "Chinese": [
     {
-        "title": "Chinese",
-        "site": [
-            "http://zh.wikipedia.org/wiki/GitHub",
-            "http://zh.wikipedia.org/wiki/Main_Page"
-        ]
+      "title": "GitHub",
+      "url": "http://zh.wikipedia.org/wiki/GitHub"
     },
     {
-        "title": "English",
-        "site": [
-            "http://en.wikipedia.org/wiki/GitHub",
-            "http://en.wikipedia.org/wiki/Main_Page"
-        ]
+      "title": "Wiki Padia",
+      "url": "http://zh.wikipedia.org/wiki/Main_Page"
     }
-]
+  ],
+  "English": [
+    {
+      "title": "GitHub",
+      "url": "http://en.wikipedia.org/wiki/GitHub"
+    },
+    {
+      "title": "Wiki Padia",
+      "url": "http://en.wikipedia.org/wiki/Main_Page"
+    }
+  ]
+}
