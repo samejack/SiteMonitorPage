@@ -99,7 +99,7 @@
 
 <script type="text/javascript">
 
-var URLS = {};
+var CONFIG = {};
 
 angular.module('myFilters', []).filter('statusFilter', function() {
     return function(input) {
@@ -107,6 +107,8 @@ angular.module('myFilters', []).filter('statusFilter', function() {
             return 'Check...';
         } else if (input === 1) {
             return 'OK';
+        } else if (input === 2) {
+            return 'Fail';
         }
         return 'N/A';
     };
@@ -119,23 +121,23 @@ monitorApp.controller('navCategoryCtrl', function ($scope, $q, $location) {
     var promise = $q(function(resolve, reject) {
         $.ajax({
             type: 'GET',
-            url: './sites.json',
+            url: './config.json',
             dataType: 'text',
             success: function (res) {
-                var urls, fixJson;
+                var config, fixJson;
                 fixJson = res.replace(/\n/g, '').replace(/\s/g, '');
-                urls = JSON.parse(fixJson);
-                URLS = urls;
+                config = JSON.parse(fixJson);
+                CONFIG = config;
 
                 // auto open first category
                 if ($location.url() === ''
                         || typeof($location.url().split('/')[2]) === 'undefined'
                         || $location.url().split('/')[2] === ''
                 ) {
-                    $location.url('/list/' + Object.keys(urls)[0]);
+                    $location.url('/list/' + Object.keys(CONFIG.site)[0]);
                 }
 
-                resolve(urls);
+                resolve(CONFIG.site);
             },
             error: function (xhr, textStatus, err) {
                 reject(err);
@@ -143,11 +145,11 @@ monitorApp.controller('navCategoryCtrl', function ($scope, $q, $location) {
         });
     });
 
-    $scope.viewMode = $location.$$path.split('/')[1];
-    $scope.cate = $location.$$path.split('/')[2];
-
+    $scope.viewMode = $location.$$path.split('/')[1] ? $location.$$path.split('/')[1] : 'list';
+    
     promise.then(function(urls) {
         $scope.categories = Object.keys(urls);
+        $scope.cate = $location.$$path.split('/')[2] ? $location.$$path.split('/')[2] : Object.keys(CONFIG.site)[0];
     }, function(err) {
         $scope.message = 'Error: ' + err;
     }).then(function(textStatus) {
@@ -157,14 +159,15 @@ monitorApp.controller('navCategoryCtrl', function ($scope, $q, $location) {
 });
 
 monitorApp.controller('listCtrl', function ($scope, $q, $routeParams, $sce) {
-    console.log('list');
+
     var list = [];
-    if (typeof(URLS[$routeParams.cate]) === 'object') {
-        for (var j in URLS[$routeParams.cate]) {
+    if (typeof(CONFIG.site[$routeParams.cate]) === 'object') {
+        for (var j in CONFIG.site[$routeParams.cate]) {
             list.push({
-                url: $sce.trustAsResourceUrl(URLS[$routeParams.cate][j].url),
-                title: URLS[$routeParams.cate][j].title,
-                status: 0
+                url: $sce.trustAsResourceUrl(CONFIG.site[$routeParams.cate][j].url),
+                title: CONFIG.site[$routeParams.cate][j].title,
+                status: 0,
+                oriUrl: CONFIG.site[$routeParams.cate][j].url
             });
         }
         $scope.list = list;
@@ -172,10 +175,36 @@ monitorApp.controller('listCtrl', function ($scope, $q, $routeParams, $sce) {
 
     var promise = function (index) {
         return $q(function(resolve) {
-            setTimeout(function () {
-                $scope.list[index].status = 1;
+            // use image to ping server
+            var image = new Image();
+            var status = 0;
+            var processId = null;
+
+            image.onload = function () {
+                status = 1;
+                if (processId !== null) {
+                    clearTimeout(processId);
+                    $scope.list[index].status = status;
+                    resolve();
+                }
+            };
+            image.onerror = function () {
+                console.log('error!!!');
+
+                status = 1;
+
+            };
+            image.src = $scope.list[index].oriUrl;
+
+            processId = setTimeout(function () {
+                $scope.list[index].status = 2;
+                if (status === 0) {
+                    status = 2;
+                }
+                $scope.list[index].status = status;
+
                 resolve();
-            }, 1000);
+            }, CONFIG.timeout);
         });
     };
 
@@ -186,30 +215,12 @@ monitorApp.controller('listCtrl', function ($scope, $q, $routeParams, $sce) {
         } else {
             flow.then(promise(i));
         }
-
     }
-
-//    flow.then(function () {
-//        $scope.list = list;
-//    });
-
-//    var promise = $q(function(resolve, reject) {
-//        setTimeout(function () {
-//            list[0].status = 'OK';
-//            resolve();
-//        }, 1000);
-//    });
-//    promise.then(function() {
-////
-////        $scope.list = list;
-//    });
-
 
 });
 
 
-monitorApp.config(['$routeProvider', function($routeProvider) {
-
+monitorApp.config(['$routeProvider', function($routeProvider, $location) {
     $routeProvider.
         when('/list/:cate', {
             templateUrl: 'view-list.html',
@@ -219,10 +230,6 @@ monitorApp.config(['$routeProvider', function($routeProvider) {
             templateUrl: 'view-preview.html',
             controller: 'listCtrl'
         });
-//          .
-//        otherwise({
-//            redirectTo: '/list/na'
-//        });
 }]);
 
 

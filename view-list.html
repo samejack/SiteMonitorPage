@@ -12,7 +12,7 @@
                 <tr ng-repeat="host in list">
                     <td>{{host.title}}</td>
                     <td><a href="{{host.url}}" target="_blank">{{host.url}}</a></td>
-                    <td><span ng-class="{0: 'label label-info', 1: 'label label-success'}[host.status]">{{host.status | statusFilter}}</span></td>
+                    <td><span ng-class="{0: 'label label-info', 1: 'label label-success', 2: 'label label-warning'}[host.status]">{{host.status | statusFilter}}</span></td>
                 </tr>
             </tbody>
         </table>
