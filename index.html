@@ -43,7 +43,7 @@
     </style>
 </head>
 
-<body ng-controller="navCategoryCtrl">
+<body ng-controller="navCategoryCtrl" data-ng-init="init()">
 
 <!-- Fixed navbar -->
 <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
@@ -145,8 +145,13 @@ monitorApp.controller('navCategoryCtrl', function ($scope, $q, $location) {
         });
     });
 
+    $scope.$on('$routeChangeSuccess', function () {
+        $scope.viewMode = $location.$$path.split('/')[1] ? $location.$$path.split('/')[1] : 'list';
+    });
+
     $scope.viewMode = $location.$$path.split('/')[1] ? $location.$$path.split('/')[1] : 'list';
-    
+
+    console.log($scope.viewMode);
     promise.then(function(urls) {
         $scope.categories = Object.keys(urls);
         $scope.cate = $location.$$path.split('/')[2] ? $location.$$path.split('/')[2] : Object.keys(CONFIG.site)[0];
@@ -175,6 +180,7 @@ monitorApp.controller('listCtrl', function ($scope, $q, $routeParams, $sce) {
 
     var promise = function (index) {
         return $q(function(resolve) {
+
             // use image to ping server
             var image = new Image();
             var status = 0;
@@ -189,10 +195,7 @@ monitorApp.controller('listCtrl', function ($scope, $q, $routeParams, $sce) {
                 }
             };
             image.onerror = function () {
-                console.log('error!!!');
-
                 status = 1;
-
             };
             image.src = $scope.list[index].oriUrl;
 
